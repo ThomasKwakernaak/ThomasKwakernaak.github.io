@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+ <!-- Bootstrap CSS -->
+<head>
+ <link rel="stylesheet" 
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" 
+    integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" 
+    crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="style.css">
+   
+
+</head>
+<body>
+<div class="jumbotron jumbotron-fluid">
+        <div class="container">
+          <h1 class="text-center">Project Pokemon
+         </h1>
+         
+        </div>
+      </div>
+      <p>
+          Dit is mijn eerste afgemaakte Unity project. ik was hier destijds heel trots om maar als ik nu naar de code kijk zie ik dat ik 
+          heel wat beter had kunnen doen.het script is heel groot en heb alles ge copy paste naar in andere battle scripts.
+          nu zie ik dat ik beter een battle manager script kon maken en van de pokemons scriptable objects.<br> 
+          de game is een kleine pokemon game waar je van gym gevecht naar gym gevecht gaat en tegen onze docenten vecht. en uiteindelijk tegen de champion die vecht met onze school hond bloempje.<br>
+          hier onder vind u de code van een van de battles.<br> 
+      </p>
+      
+      <div class="card text-white bg-secondary mb-3" >
+            <div class="card-header">pokemon battle script</div>
+            <div class="card-body">
+                    <pre class='brush: csharp'>
+                            using System.Collections;
+                            using System.Collections.Generic;
+                            using UnityEngine;
+                            using UnityEngine.UI;
+                            
+                            public class Iris_battle_controller : MonoBehaviour {
+                            
+                                //stats jouw pokemon
+                                private int ypkmn;
+                                public GameObject ypokemon;
+                                private int attack1 = 110;
+                                private int level1 = 50;
+                                private int hp1 = 500;
+                                private int maxhp1 = 500;
+                                private int defense1 = 70;
+                                private int type_y = 2;
+                                public Slider healthSlider1;
+                                public Sprite ypokemon1;
+                                public Sprite ypokemon2;
+                                public Sprite ypokemon3;
+                                public AudioClip lucario_cry;
+                                public AudioClip scizor_cry;
+                                public AudioClip charizard_cry;
+                            
+                                //stats tegenstanders pokemon
+                                private int epkmn;
+                                public GameObject epokemon;
+                                private int defense;
+                                private int hp;
+                                private int maxhp;
+                                private int level;
+                                private int type_e;
+                                private int attack;
+                                public Slider healthSlider;
+                                public Sprite epokemon1;
+                                public Sprite epokemon2;
+                                public Sprite epokemon3;
+                                public AudioClip wobbuffet_cry;
+                                public AudioClip mrmime_cry;
+                                public AudioClip Gardevoir_cry;
+                            
+                            
+                                public GameObject opponent;
+                                //stats aanval
+                                private int power;
+                                private int type_1;
+                            
+                                //type pokemon
+                                private int type_2;
+                            
+                                // de states
+                                private enum States
+                                {
+                                    start, your_turn, enemy_turn, win, lose, enter, enter0
+                                }
+                                public Text tekstvlak;
+                                public Text moves;
+                            
+                                public AudioClip pling;
+                                public AudioClip victory;
+                                private States currentState;
+                               
+                            
+                                // Use this for initialization
+                                void Start() {
+                                    Lucario();
+                                    wobbuffet();
+                            
+                            
+                                    Debug.Log("druk op de pijl toetsen om de 4 verschillende aanvallen te gebruiken");
+                                    currentState = States.start;
+                                }
+                            
+                                // Update is called once per frame
+                                void Update()
+                                {
+                                    healthSlider.value = hp;
+                                    healthSlider.maxValue = maxhp;
+                                    healthSlider1.value = hp1;
+                                    healthSlider1.maxValue = maxhp1;
+                                    if (hp1 < 0)
+                                    {
+                                        currentState = States.lose;
+                                    }
+                            
+                                    if (hp < 0)
+                                    {
+                                        currentState = States.win;
+                                    }
+                            
+                                    if (currentState == States.start)
+                                    {
+                                        state_start();
+                                    }
+                                    else if (currentState == States.your_turn)
+                                    {
+                                        state_yourturn();
+                                    }
+                                    else if (currentState == States.enemy_turn)
+                                    {
+                                        state_enemyturn();
+                                    }
+                                    else if (currentState == States.win)
+                                    {
+                                        state_win();
+                                    }
+                                    else if (currentState == States.lose)
+                                    {
+                                        state_lose();
+                                    }
+                                    else if (currentState == States.enter)
+                                    {
+                                        state_enter();
+                                    }
+                                    else if (currentState == States.enter0)
+                                    {
+                                        state_enter0();
+                                    }
+                                }
+                                void state_start()
+                                {
+                                    
+                                    tekstvlak.text = "you are challenged by elite four member Iris \n \n Iris sends out Wobbuffet";
+                                    if (Input.GetKeyDown(KeyCode.KeypadEnter) ||Input.GetKeyDown(KeyCode.Return))
+                                    {
+                                        opponent.transform.position = new Vector3(90.0f, 0.0f, 0.0f);
+                                      
+                                        currentState = States.your_turn;
+                                        AudioSource.PlayClipAtPoint(pling,transform.position);
+                                    }
+                                }
+                            
+                                void state_yourturn()
+                                {
+                                    tekstvlak.text = "choose your move";
+                                    if (ypkmn == 1)
+                                    {
+                            
+                                        if (Input.GetKeyDown(KeyCode.UpArrow))
+                                        {
+                                            AudioSource.PlayClipAtPoint(pling, transform.position);
+                                            type_1 = 5;
+                                            power = 100;
+                                            Damage_1();
+                                            if (Modifier() == 2)
+                                            {
+                                                tekstvlak.text = " lucario used earthquacke \n \n its super effective";
+                                            }
+                                            else if (modifier1() == 2)
+                                            {
+                                                tekstvlak.text = " lucario used earthquacke \n \n its not verry effective";
+                                            }
+                                            else if (Modifier() == 0)
+                                            {
+                                                tekstvlak.text = " lucario used earthquacke \n \n its not effective";
+                                            }
+                                            else
+                                            {
+                                                tekstvlak.text = "lucario used earthquacke";
+                                            }
+                            
+                                            currentState = States.enter;
+                                        }
+                                        if (Input.GetKeyDown(KeyCode.DownArrow))
+                                        {
+                                            AudioSource.PlayClipAtPoint(pling, transform.position);
+                                            type_1 = 2;
+                                            power = 80;
+                                            Damage_1();
+                                            if (Modifier() == 2)
+                                            {
+                                                tekstvlak.text = " lucario used aura sphere \n \n its super effective";
+                                            }
+                                            else if (modifier1() == 2)
+                                            {
+                                                tekstvlak.text = " lucario used aura sphere \n \n its not verry effective";
+                                            }
+                                            else if (Modifier() == 0)
+                                            {
+                                                tekstvlak.text = " lucario used aura sphere \n \n its not effective";
+                                            }
+                                            else
+                                            {
+                                                tekstvlak.text = "lucario used aura sphere";
+                                            }
+                            
+                                            currentState = States.enter;
+                                        }
+                                        if (Input.GetKeyDown(KeyCode.LeftArrow))
+                                        {
+                                            AudioSource.PlayClipAtPoint(pling, transform.position);
+                                            type_1 = 9;
+                                            power = 50;
+                                            Damage_1();
+                                            if (Modifier() == 2)
+                                            {
+                                                tekstvlak.text = " lucario used metal claw \n \n its super effective";
+                                            }
+                                            else if (modifier1() == 2)
+                                            {
+                                                tekstvlak.text = " lucario used metal claw \n \n its not verry effective";
+                                            }
+                                            else if (Modifier() == 0)
+                                            {
+                                                tekstvlak.text = " lucario used metal claw \n \n its not effective";
+                                            }
+                                            else
+                                            {
+                                                tekstvlak.text = "lucario used metal claw";
+                                            }
+                                            currentState = States.enter;
+                                        }
+                                        if (Input.GetKeyDown(KeyCode.RightArrow))
+                                        {
+                                            AudioSource.PlayClipAtPoint(pling, transform.position);
+                                            type_1 = 6;
+                                            power = 60;
+                                            Damage_1();
+                            
+                                            if (Modifier() == 2)
+                                            {
+                                                tekstvlak.text = " lucario used rock tomb \n \n its super effective";
+                                            }
+                                            else if (modifier1() == 2)
+                                            {
+                                                tekstvlak.text = " lucario used rock tomb \n \n its not verry effective";
+                                            }
+                                            else if (Modifier() == 0)
+                                            {
+                                                tekstvlak.text = " lucario used rock tomb \n \n its not effective";
+                                            }
+                                            else
+                                            {
+                                                tekstvlak.text = "lucario used rock tomb";
+                                            }
+                            
+                                            currentState = States.enter;
+                                        }
+                                    }
+                                    else if (ypkmn == 2)
+                                    {
+                            
+                                        if (Input.GetKeyDown(KeyCode.UpArrow))
+                                        {
+                                            AudioSource.PlayClipAtPoint(pling, transform.position);
+                                            type_1 = 7;
+                                            power = 80;
+                                            Damage_1();
+                                            if (Modifier() == 2)
+                                            {
+                                                tekstvlak.text = " Scizor used X-Scissor\n \n its super effective";
+                                            }
+                                            else if (modifier1() == 2)
+                                            {
+                                                tekstvlak.text = " Scizor used X-Scissor \n \n its not verry effective";
+                                            }
+                                            else if (Modifier() == 0)
+                                            {
+                                                tekstvlak.text = " Scizor used X-Scissore \n \n its not effective";
+                                            }
+                                            else
+                                            {
+                                                tekstvlak.text = "Scizor used 	X-Scissor";
+                                            }
+                            
+                                            currentState = States.enter;
+                                        }
+                                        if (Input.GetKeyDown(KeyCode.DownArrow))
+                                        {
+                                            AudioSource.PlayClipAtPoint(pling, transform.position);
+                                            type_1 = 7;
+                                            power = 70;
+                                            Damage_1();
+                                            if (Modifier() == 2)
+                                            {
+                                                tekstvlak.text = " Scizor used Night Slash \n \n its super effective";
+                                            }
+                                            else if (modifier1() == 2)
+                                            {
+                                                tekstvlak.text = " Scizor used Night Slash \n \n its not verry effective";
+                                            }
+                                            else if (Modifier() == 0)
+                                            {
+                                                tekstvlak.text = " Scizor used Night Slash \n \n its not effective";
+                                            }
+                                            else
+                                            {
+                                                tekstvlak.text = "Scizor used Night Slash";
+                                            }
+                            
+                                            currentState = States.enter;
+                                        }
+                                        if (Input.GetKeyDown(KeyCode.LeftArrow))
+                                        {
+                                            AudioSource.PlayClipAtPoint(pling, transform.position);
+                                            type_1 = 9;
+                                            power = 80;
+                                            Damage_1();
+                                            if (Modifier() == 2)
+                                            {
+                                                tekstvlak.text = " Scizor used Iron Head \n \n its super effective";
+                                            }
+                                            else if (modifier1() == 2)
+                                            {
+                                                tekstvlak.text = " Scizor used Iron Head \n \n its not verry effective";
+                                            }
+                                            else if (Modifier() == 0)
+                                            {
+                                                tekstvlak.text = " Scizor used Iron Head \n \n its not effective";
+                                            }
+                                            else
+                                            {
+                                                tekstvlak.text = "Scizor used Iron Head";
+                                            }
+                                            currentState = States.enter;
+                                        }
+                                        if (Input.GetKeyDown(KeyCode.RightArrow))
+                                        {
+                                            AudioSource.PlayClipAtPoint(pling, transform.position);
+                                            type_1 = 1;
+                                            power = 60;
+                                            Damage_1();
+                            
+                                            if (Modifier() == 2)
+                                            {
+                                                tekstvlak.text = " Scizor used Slash \n \n its super effective";
+                                            }
+                                            else if (modifier1() == 2)
+                                            {
+                                                tekstvlak.text = " Scizor used Slash \n \n its not verry effective";
+                                            }
+                                            else if (Modifier() == 0)
+                                            {
+                                                tekstvlak.text = " Scizor used Slash \n \n its not effective";
+                                            }
+                                            else
+                                            {
+                                                tekstvlak.text = "Scizor used Slash";
+                                            }
+                            
+                                            currentState = States.enter;
+                                        }
+                                    }
+                                    else if (ypkmn == 3)
+                                    {
+                            
+                                        if (Input.GetKeyDown(KeyCode.UpArrow))
+                                        {
+                                            AudioSource.PlayClipAtPoint(pling, transform.position);
+                                            type_1 = 16;
+                                            power = 60;
+                                            Damage_1();
+                                            if (Modifier() == 2)
+                                            {
+                                                tekstvlak.text = " Charizard used Dragon Tail	\n \n its super effective";
+                                            }
+                                            else if (modifier1() == 2)
+                                            {
+                                                tekstvlak.text = " Charizard used Dragon Tail	 \n \n its not verry effective";
+                                            }
+                                            else if (Modifier() == 0)
+                                            {
+                                                tekstvlak.text = " Charizard used Dragon Tail	 \n \n its not effective";
+                                            }
+                                            else
+                                            {
+                                                tekstvlak.text = "Charizard used Dragon Tail	";
+                                            }
+                            
+                                            currentState = States.enter;
+                                        }
+                                        if (Input.GetKeyDown(KeyCode.DownArrow))
+                                        {
+                                            AudioSource.PlayClipAtPoint(pling, transform.position);
+                                            type_1 = 10;
+                                            power = 90;
+                                            Damage_1();
+                                            if (Modifier() == 2)
+                                            {
+                                                tekstvlak.text = " Charizard used Flamethrower \n \n its super effective";
+                                            }
+                                            else if (modifier1() == 2)
+                                            {
+                                                tekstvlak.text = " Charizard used Flamethrower \n \n its not verry effective";
+                                            }
+                                            else if (Modifier() == 0)
+                                            {
+                                                tekstvlak.text = " Charizard used Flamethrower \n \n its not effective";
+                                            }
+                                            else
+                                            {
+                                                tekstvlak.text = "Charizard used Flamethrower";
+                                            }
+                            
+                                            currentState = States.enter;
+                                        }
+                                        if (Input.GetKeyDown(KeyCode.LeftArrow))
+                                        {
+                                            AudioSource.PlayClipAtPoint(pling, transform.position);
+                                            type_1 = 1;
+                                            power = 150;
+                                            Damage_1();
+                                            if (Modifier() == 2)
+                                            {
+                                                tekstvlak.text = " Charizard used Hyper Beam \n \n its super effective";
+                                            }
+                                            else if (modifier1() == 2)
+                                            {
+                                                tekstvlak.text = " Charizard used Hyper Beam \n \n its not verry effective";
+                                            }
+                                            else if (Modifier() == 0)
+                                            {
+                                                tekstvlak.text = " Charizard used Hyper Beam \n \n its not effective";
+                                            }
+                                            else
+                                            {
+                                                tekstvlak.text = "Charizards used Hyper Beam";
+                                            }
+                                            currentState = States.enter;
+                                        }
+                                        if (Input.GetKeyDown(KeyCode.RightArrow))
+                                        {
+                                            AudioSource.PlayClipAtPoint(pling, transform.position);
+                                            type_1 = 1;
+                                            power = 60;
+                                            Damage_1();
+                            
+                                            if (Modifier() == 2)
+                                            {
+                                                tekstvlak.text = " Charizards used Slash \n \n its super effective";
+                                            }
+                                            else if (modifier1() == 2)
+                                            {
+                                                tekstvlak.text = " Charizards used Slash \n \n its not verry effective";
+                                            }
+                                            else if (Modifier() == 0)
+                                            {
+                                                tekstvlak.text = " Charizards used Slash \n \n its not effective";
+                                            }
+                                            else
+                                            {
+                                                tekstvlak.text = "Charizards used Slash";
+                                            }
+                            
+                                            currentState = States.enter;
+                                        }
+                                    }
+                                }
+                            
+                                void state_enemyturn()
+                                {
+                                    if (epkmn == 1)
+                                    {
+                                        int random = Random.Range(1, 5);
+                                        if (random == 1)
+                                        {
+                                            type_1 = 2;
+                                            power = power * 2;
+                                            Damage_2();
+                                            if (Modifier() == 2)
+                                            {
+                                                tekstvlak.text = " wobbuffet used Counter \n \n its super effective";
+                                            }
+                                            else if (modifier1() == 2)
+                                            {
+                                                tekstvlak.text = " wobbuffet used Counter \n \n its not verry effective";
+                                            }
+                                            else if (Modifier() == 0)
+                                            {
+                                                tekstvlak.text = " wobbuffet used Counter \n \n its not effective";
+                                            }
+                                            else
+                                            {
+                                                tekstvlak.text = "wobbuffet used Counter";
+                                            }
+                                            currentState = States.enter0;
+                                        }
+                                        if (random == 2)
+                                        {
+                                            type_1 = 2;
+                                            power = power * 2;
+                                            Damage_2();
+                                            if (Modifier() == 2)
+                                            {
+                                                tekstvlak.text = " wobbuffet used Counter \n \n its super effective";
+                                            }
+                                            else if (modifier1() == 2)
+                                            {
+                                                tekstvlak.text = " wobbuffet used Counter \n \n its not verry effective";
+                                            }
+                                            else if (Modifier() == 0)
+                                            {
+                                                tekstvlak.text = " wobbuffet used Counter \n \n its not effective";
+                                            }
+                                            else
+                                            {
+                                                tekstvlak.text = "wobbuffet used Counter";
+                                            }
+                                            currentState = States.enter0;
+                                        }
+                                        if (random == 3)
+                                        {
+                                            type_1 = 2;
+                                            power = power * 2;
+                                            Damage_2();
+                                            if (Modifier() == 2)
+                                            {
+                                                tekstvlak.text = " wobbuffet used Counter \n \n its super effective";
+                                            }
+                                            else if (modifier1() == 2)
+                                            {
+                                                tekstvlak.text = " wobbuffet used Counter \n \n its not verry effective";
+                                            }
+                                            else if (Modifier() == 0)
+                                            {
+                                                tekstvlak.text = " wobbuffet used Counter \n \n its not effective";
+                                            }
+                                            else
+                                            {
+                                                tekstvlak.text = "wobbuffet used Counter";
+                                            }
+                                            currentState = States.enter0;
+                                        }
+                                        if (random == 4)
+                                        {
+                                            type_1 = 2;
+                                            power = power * 2;
+                                            Damage_2();
+                                            if (Modifier() == 2)
+                                            {
+                                                tekstvlak.text = " wobbuffet used Counter \n \n its super effective";
+                                            }
+                                            else if (modifier1() == 2)
+                                            {
+                                                tekstvlak.text = " wobbuffet used Counter \n \n its not verry effective";
+                                            }
+                                            else if (Modifier() == 0)
+                                            {
+                                                tekstvlak.text = " wobbuffet used Counter \n \n its not effective";
+                                            }
+                                            else
+                                            {
+                                                tekstvlak.text = "wobbuffet used Counter";
+                                            }
+                                            currentState = States.enter0;
+                                        }
+                                    }
+                                    else if (epkmn == 2)
+                                    {
+                                        int random = Random.Range(1, 5);
+                                        if (random == 1)
+                                        {
+                                           
+                                               type_1 = 14;
+                                            power = 50;
+                                            Damage_2();
+                                            if (Modifier() == 2)
+                                            {
+                                                tekstvlak.text = " Mr. Mime used  Confusion \n \n its super effective";
+                                            }
+                                            else if (modifier1() == 2)
+                                            {
+                                                tekstvlak.text = " Mr. Mime used  Confusion \n \n its not verry effective";
+                                            }
+                                            else if (Modifier() == 0)
+                                            {
+                                                tekstvlak.text = " Mr. Mime used  Confusion \n \n its not effective";
+                                            }
+                                            else
+                                            {
+                                                tekstvlak.text = "Mr. Mime used  Confusion";
+                                            }
+                                            currentState = States.enter0;
+                                        }
+                                        if (random == 2)
+                                        {
+                                            type_1 = 1;
+                                            power = 40;
+                                            Damage_2();
+                                            if (Modifier() == 2)
+                                            {
+                                                tekstvlak.text = " Mr. Mime used Pound \n \n its super effective";
+                                            }
+                                            else if (modifier1() == 2)
+                                            {
+                                                tekstvlak.text = " Mr. Mime used Pound \n \n its not verry effective";
+                                            }
+                                            else if (Modifier() == 0)
+                                            {
+                                                tekstvlak.text = " Mr. Mime used Pound \n \n its not effective";
+                                            }
+                                            else
+                                            {
+                                                tekstvlak.text = "Mr. Mime used Pound";
+                                            }
+                                            currentState = States.enter0;
+                                        }
+                                        if (random == 3)
+                                        {
+                                            type_1 = 14;
+                                            power = 65;
+                                            Damage_2();
+                                            if (Modifier() == 2)
+                                            {
+                                                tekstvlak.text = " Mr. Mime used Psybeam \n \n its super effective";
+                                            }
+                                            else if (modifier1() == 2)
+                                            {
+                                                tekstvlak.text = " Mr. Mime used Psybeam \n \n its not verry effective";
+                                            }
+                                            else if (Modifier() == 0)
+                                            {
+                                                tekstvlak.text = " Mr. Mime used Psybeam \n \n its not effective";
+                                            }
+                                            else
+                                            {
+                                                tekstvlak.text = "Mr. Mime used Psybeam";
+                                            }
+                                            currentState = States.enter0;
+                                        }
+                                        if (random == 4)
+                                        {
+                                            type_1 = 14;
+                                            power = 50;
+                                            Damage_2();
+                                            if (Modifier() == 2)
+                                            {
+                                                tekstvlak.text = " Mr. Mime used Confusion \n \n its super effective";
+                                            }
+                                            else if (modifier1() == 2)
+                                            {
+                                                tekstvlak.text = " Mr. Mime used Confusion \n \n its not verry effective";
+                                            }
+                                            else if (Modifier() == 0)
+                                            {
+                                                tekstvlak.text = " Mr. Mime used Confusion \n \n its not effective";
+                                            }
+                                            else
+                                            {
+                                                tekstvlak.text = "Mr. Mime used Confusion";
+                                            };
+                                            currentState = States.enter0;
+                                        }
+                                    }
+                                    else if (epkmn == 3)
+                                    {
+                                        int random = Random.Range(1, 5);
+                                        if (random == 1)
+                                        {
+                                            type_1 = 8;
+                                            power = 80;
+                                            Damage_2();
+                                            if (Modifier() == 2)
+                                            {
+                                                tekstvlak.text = " Gardevoir used  Shadow Ball \n \n its super effective";
+                                            }
+                                            else if (modifier1() == 2)
+                                            {
+                                                tekstvlak.text = " Gardevoir used  Shadow Ball \n \n its not verry effective";
+                                            }
+                                            else if (Modifier() == 0)
+                                            {
+                                                tekstvlak.text = " Gardevoir used  Shadow Ball \n \n its not effective";
+                                            }
+                                            else
+                                            {
+                                                tekstvlak.text = "Gardevoir used  Shadow Ball";
+                                            }
+                                            currentState = States.enter0;
+                                        }
+                                        if (random == 2)
+                                        {
+                                            type_1 = 14;
+                                            power = 50;
+                                            Damage_2();
+                                            if (Modifier() == 2)
+                                            {
+                                                tekstvlak.text = " Gardevoir used Confusion \n \n its super effective";
+                                            }
+                                            else if (modifier1() == 2)
+                                            {
+                                                tekstvlak.text = " Gardevoir used Confusion \n \n its not verry effective";
+                                            }
+                                            else if (Modifier() == 0)
+                                            {
+                                                tekstvlak.text = " Gardevoir used Confusion \n \n its not effective";
+                                            }
+                                            else
+                                            {
+                                                tekstvlak.text = "Gardevoir used Confusion";
+                                            }
+                                            currentState = States.enter0;
+                                        }
+                                        if (random == 3)
+                                        {
+                                            type_1 = 12;
+                                            power = 60;
+                                            Damage_2();
+                                            if (Modifier() == 2)
+                                            {
+                                                tekstvlak.text = " Gardevoir used  Magical Leaf \n \n its super effective";
+                                            }
+                                            else if (modifier1() == 2)
+                                            {
+                                                tekstvlak.text = " Gardevoir used  Magical Leaf \n \n its not verry effective";
+                                            }
+                                            else if (Modifier() == 0)
+                                            {
+                                                tekstvlak.text = " Gardevoir used  Magical Leaf \n \n its not effective";
+                                            }
+                                            else
+                                            {
+                                                tekstvlak.text = "Gardevoir used  Magical Leaf";
+                                            }
+                                            currentState = States.enter0;
+                                        }
+                                        if (random == 4)
+                                        {
+                                            type_1 = 14;
+                                            power = 90;
+                                            Damage_2();
+                                            if (Modifier() == 2)
+                                            {
+                                                tekstvlak.text = " Gardevoir used  Psychic \n \n its super effective";
+                                            }
+                                            else if (modifier1() == 2)
+                                            {
+                                                tekstvlak.text = " Gardevoir used  Psychic \n \n its not verry effective";
+                                            }
+                                            else if (Modifier() == 0)
+                                            {
+                                                tekstvlak.text = " Gardevoir used  Psychic \n \n its not effective";
+                                            }
+                                            else
+                                            {
+                                                tekstvlak.text = "Gardevoir used  Psychic";
+                                            }
+                                            currentState = States.enter0;
+                                        }
+                                    }
+                                }
+                                void state_win()
+                                {
+                                    if (epkmn == 1)
+                                    {
+                                        mrmime();
+                                        currentState = States.enemy_turn;
+                            
+                                    }
+                                    else if (epkmn == 2)
+                                    {
+                                       
+                                        Gardevoir();
+                                        currentState = States.enemy_turn;
+                            
+                                    }
+                                    else
+                                    {
+                                        tekstvlak.text = "you win ";
+                                    }
+                                }
+                            
+                                void state_lose()
+                                {
+                                    if (ypkmn == 1)
+                                    {
+                                        Scizor();
+                                        currentState = States.your_turn;
+                                    }
+                                    else if (ypkmn == 2)
+                                    {
+                                        Charizard();
+                                        currentState = States.your_turn;
+                                    }
+                                    else
+                                    {
+                                        tekstvlak.text = "you lose";
+                                    }
+                                }
+                            
+                                void state_enter()
+                                {
+                                    if (Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return))
+                                    {
+                                        AudioSource.PlayClipAtPoint(pling, transform.position);
+                                        currentState = States.enemy_turn;
+                                    }
+                                }
+                            
+                                void state_enter0()
+                                {
+                                    if (Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return))
+                                    {
+                                        AudioSource.PlayClipAtPoint(pling, transform.position);
+                                        currentState = States.your_turn;
+                                    }
+                                }
+                                void Lucario()
+                                {
+                                    moves.text =
+                                        " up            earthquake \n\n " +
+                                        "down           aura sphere \n\n" +
+                                        " left          metal claw\n\n " +
+                                        "right          rock tomb"
+                                        ;
+                                    ypokemon.gameObject.GetComponent&lt;SpriteRenderer&gt;().sprite = ypokemon1;
+                                    ypkmn = 1;
+                                    attack1 = 361;
+                                    level1 = 50;
+                                    hp1 = 344;
+                                    maxhp1 = 344;
+                                    defense1 = 261;
+                                    type_y = 2;
+                                    AudioSource.PlayClipAtPoint(lucario_cry, transform.position);
+                            
+                                }
+                                void Scizor()
+                                {
+                                    moves.text =
+                                       " up         X-Scissor \n\n " +
+                                       "down        Night Slash \n\n" +
+                                       " left       Iron Head\n\n " +
+                                       "right       Slash"
+                                       ;
+                                    ypokemon.gameObject.GetComponent&lt;SpriteRenderer&gt;().sprite = ypokemon2;
+                                    ypkmn = 2;
+                                    attack1 = 394;
+                                    level1 = 50;
+                                    hp1 = 344;
+                                    maxhp1 = 344;
+                                    defense1 = 328;
+                                    type_y = 7;
+                                    AudioSource.PlayClipAtPoint(scizor_cry, transform.position);
+                                }
+                                void Charizard()
+                                {
+                                    moves.text =
+                                       " up         Dragon Tail \n\n " +
+                                       "down        Flamethrower \n\n" +
+                                       " left       Hyper Beam\n\n " +
+                                       "right       Slash"
+                                       ;
+                                    ypokemon.gameObject.GetComponent&lt;SpriteRenderer&gt;().sprite = ypokemon3;
+                                    ypkmn = 3;
+                                    attack1 = 348;
+                                    level1 = 50;
+                                    hp1 = 360;
+                                    maxhp1 = 360;
+                                    defense1 = 295;
+                                    type_y = 10;
+                                    AudioSource.PlayClipAtPoint(charizard_cry, transform.position);
+                                }
+                                void wobbuffet()
+                                {
+                                    epokemon.gameObject.GetComponent&lt;SpriteRenderer&gt;().sprite = epokemon1;
+                                    epkmn = 1;
+                                    attack = 181;
+                                    level = 50;
+                                    hp = 584;
+                                    maxhp = 584;
+                                    defense = 180;
+                                    type_e = 14;
+                                    AudioSource.PlayClipAtPoint(wobbuffet_cry, transform.position);
+                                }
+                                void mrmime()
+                                {
+                                    epokemon.gameObject.GetComponent&lt;SpriteRenderer&gt;().sprite = epokemon2;
+                                    epkmn = 2;
+                                    attack = 207;
+                                    level = 50;
+                                    hp = 284;
+                                    maxhp = 284;
+                                    defense = 200;
+                                    type_e = 14;
+                                    AudioSource.PlayClipAtPoint(mrmime_cry, transform.position);
+                                }
+                                void Gardevoir()
+                                {
+                                    epokemon.gameObject.GetComponent&lt;SpriteRenderer&gt;().sprite = epokemon3;
+                                    epkmn = 3;
+                                    attack = 383;
+                                    level = 70;
+                                    hp = 340;
+                                    maxhp = 340;
+                                    defense = 361;
+                                    type_e = 14;
+                                    AudioSource.PlayClipAtPoint(Gardevoir_cry, transform.position);
+                                }
+                            
+                            
+                                void Damage_1()
+                                {
+                                    type_2 = type_e;
+                                    int damage;
+                                    damage = ((2 * level1 / 5 + 2) * power * attack1 / defense / 50 + 2) * Modifier() / modifier1();
+                                    Debug.Log("de damage is" + damage);
+                                    hp = hp - damage;
+                                    Debug.Log(" lucario heeft nog" + hp1 + "hp");
+                            
+                                }
+                            
+                                void Damage_2()
+                                {
+                                    type_2 = type_y;
+                                    int damage;
+                                    damage = ((2 * level / 5 + 2) * power * attack / defense1 / 50 + 2) * Modifier() / modifier1();
+                                    Debug.Log("de damage is" + damage);
+                                    hp1 = hp1 - damage;
+                                    Debug.Log("de tegensstander heeft nog" + hp + "hp");
+                            
+                                }
+                                int modifier1()
+                                {
+                                    int modifier1;
+                                    if
+                                                (
+                                                type_1 == 1 && type_2 == 6 ||
+                                                type_1 == 1 && type_2 == 9 ||
+                                                type_1 == 2 && type_2 == 3 ||
+                                                type_1 == 2 && type_2 == 4 ||
+                                                type_1 == 2 && type_2 == 7 ||
+                                                type_1 == 2 && type_2 == 14 ||
+                                                type_1 == 3 && type_2 == 6 ||
+                                                type_1 == 3 && type_2 == 9 ||
+                                                type_1 == 3 && type_2 == 13 ||
+                                                type_1 == 4 && type_2 == 4 ||
+                                                type_1 == 4 && type_2 == 5 ||
+                                                type_1 == 4 && type_2 == 6 ||
+                                                type_1 == 4 && type_2 == 8 ||
+                                                type_1 == 5 && type_2 == 7 ||
+                                                type_1 == 5 && type_2 == 12 ||
+                                                type_1 == 6 && type_2 == 2 ||
+                                                type_1 == 6 && type_2 == 5 ||
+                                                type_1 == 6 && type_2 == 9 ||
+                                                type_1 == 7 && type_2 == 2 ||
+                                                type_1 == 7 && type_2 == 3 ||
+                                                type_1 == 7 && type_2 == 4 ||
+                                                type_1 == 7 && type_2 == 8 ||
+                                                type_1 == 7 && type_2 == 9 ||
+                                                type_1 == 7 && type_2 == 10 ||
+                                                type_1 == 8 && type_2 == 17 ||
+                                                type_1 == 9 && type_2 == 9 ||
+                                                type_1 == 9 && type_2 == 10 ||
+                                                type_1 == 9 && type_2 == 11 ||
+                                                type_1 == 9 && type_2 == 13 ||
+                                                type_1 == 10 && type_2 == 6 ||
+                                                type_1 == 10 && type_2 == 10 ||
+                                                type_1 == 10 && type_2 == 11 ||
+                                                type_1 == 10 && type_2 == 16 ||
+                                                type_1 == 11 && type_2 == 11 ||
+                                                type_1 == 11 && type_2 == 12 ||
+                                                type_1 == 11 && type_2 == 16 ||
+                                                type_1 == 12 && type_2 == 3 ||
+                                                type_1 == 12 && type_2 == 4 ||
+                                                type_1 == 12 && type_2 == 7 ||
+                                                type_1 == 12 && type_2 == 9 ||
+                                                type_1 == 12 && type_2 == 10 ||
+                                                type_1 == 12 && type_2 == 12 ||
+                                                type_1 == 12 && type_2 == 16 ||
+                                                type_1 == 13 && type_2 == 12 ||
+                                                type_1 == 13 && type_2 == 13 ||
+                                                type_1 == 13 && type_2 == 16 ||
+                                                type_1 == 14 && type_2 == 9 ||
+                                                type_1 == 14 && type_2 == 14 ||
+                                                type_1 == 15 && type_2 == 9 ||
+                                                type_1 == 15 && type_2 == 10 ||
+                                                type_1 == 15 && type_2 == 11 ||
+                                                type_1 == 15 && type_2 == 15 ||
+                                                type_1 == 16 && type_2 == 9 ||
+                                                type_1 == 17 && type_2 == 2 ||
+                                                type_1 == 17 && type_2 == 17
+                                                )
+                                    {
+                                        modifier1 = 2;
+                                    }
+                                    else
+                                    {
+                                        modifier1 = 1;
+                                    }
+                                    return modifier1;
+                                }
+                            
+                                int Modifier()
+                                {
+                                    int modifier;
+                                    if (
+                                         type_1 == 2 && type_2 == 1 ||
+                                         type_1 == 2 && type_2 == 6 ||
+                                         type_1 == 2 && type_2 == 9 ||
+                                         type_1 == 2 && type_2 == 15 ||
+                                         type_1 == 2 && type_2 == 17 ||
+                                         type_1 == 3 && type_2 == 2 ||
+                                         type_1 == 3 && type_2 == 7 ||
+                                         type_1 == 3 && type_2 == 12 ||
+                                         type_1 == 4 && type_2 == 12 ||
+                                         type_1 == 5 && type_2 == 4 ||
+                                         type_1 == 5 && type_2 == 6 ||
+                                         type_1 == 5 && type_2 == 9 ||
+                                         type_1 == 5 && type_2 == 10 ||
+                                         type_1 == 5 && type_2 == 13 ||
+                                         type_1 == 6 && type_2 == 3 ||
+                                         type_1 == 6 && type_2 == 7 ||
+                                         type_1 == 6 && type_2 == 10 ||
+                                         type_1 == 6 && type_2 == 15 ||
+                                         type_1 == 7 && type_2 == 12 ||
+                                         type_1 == 7 && type_2 == 14 ||
+                                         type_1 == 7 && type_2 == 17 ||
+                                         type_1 == 8 && type_2 == 8 ||
+                                         type_1 == 8 && type_2 == 14 ||
+                                         type_1 == 9 && type_2 == 6 ||
+                                         type_1 == 9 && type_2 == 15 ||
+                                         type_1 == 10 && type_2 == 7 ||
+                                         type_1 == 10 && type_2 == 9 ||
+                                         type_1 == 10 && type_2 == 12 ||
+                                         type_1 == 10 && type_2 == 15 ||
+                                         type_1 == 11 && type_2 == 5 ||
+                                         type_1 == 11 && type_2 == 6 ||
+                                         type_1 == 11 && type_2 == 10 ||
+                                         type_1 == 12 && type_2 == 5 ||
+                                         type_1 == 12 && type_2 == 6 ||
+                                         type_1 == 12 && type_2 == 11 ||
+                                         type_1 == 13 && type_2 == 3 ||
+                                         type_1 == 13 && type_2 == 11 ||
+                                         type_1 == 14 && type_2 == 2 ||
+                                         type_1 == 14 && type_2 == 4 ||
+                                         type_1 == 15 && type_2 == 3 ||
+                                         type_1 == 15 && type_2 == 5 ||
+                                         type_1 == 15 && type_2 == 12 ||
+                                         type_1 == 15 && type_2 == 16 ||
+                                         type_1 == 16 && type_2 == 16 ||
+                                         type_1 == 17 && type_2 == 8 ||
+                                         type_1 == 17 && type_2 == 14
+                                         )
+                                    {
+                                        modifier = 2;
+                                    }
+                            
+                                   
+                            
+                                    else if
+                                         (
+                                         type_1 == 1 && type_2 == 8 ||
+                                         type_1 == 2 && type_2 == 8 ||
+                                         type_1 == 4 && type_2 == 9 ||
+                                         type_1 == 5 && type_2 == 3 ||
+                                         type_1 == 8 && type_2 == 1 ||
+                                         type_1 == 13 && type_2 == 5 ||
+                                         type_1 == 14 && type_2 == 17
+                                         )
+                                    {
+                                        modifier = 0;
+                                    }
+                            
+                                    else
+                                    {
+                                        modifier = 1;
+                                    }
+                            
+                                    return modifier;
+                            
+                                }
+                                
+                            
+                               
+                            }
+                            // types
+                            // 1 = normal
+                            // 2 = fight
+                            // 3 = flying
+                            // 4 = poison
+                            // 5 = ground
+                            // 6 = rock
+                            // 7 = bug
+                            // 8 = ghost
+                            // 9 = steel
+                            // 10 = fire
+                            // 11 = water
+                            // 12 = grass
+                            // 13 = electr
+                            // 14 = psychc
+                            // 15 = ice
+                            // 16 = dragon
+                            // 17 = dark
+                            
+                            </pre>
+              <p class="card-text"></p>
+            </div>
+          </div>
+          <a href="index.html" class="btn btn-secondary btn-lg btn-block">terug naar startpagina</a>
+      </body>

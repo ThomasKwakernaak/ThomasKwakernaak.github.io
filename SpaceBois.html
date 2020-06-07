@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+ <!-- Bootstrap CSS -->
+<head>
+ <link rel="stylesheet" 
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" 
+    integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" 
+    crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="style.css">
+   
+
+</head>
+<body>
+        <div class="jumbotron jumbotron-fluid">
+                <div class="container">
+                  <h1 class="text-center">Space Bois
+                 </h1>
+                 
+                </div>
+              </div>
+              <p>
+                  dit project is mijn tweede unity project. het is eigelijk een space invaders ripoff maar ik heb wel redelijk wat geleerd tijdens het maken van deze game.
+                  hieronder ziet u de code van het bestuuren van het ruimteship.
+              </p>
+              <div class="card text-white bg-secondary mb-3 " >
+                    <div class="card-header">Player script</div>
+                    <div class="card-body">
+                            <pre class='brush: csharp'>
+
+                                    using System.Collections;
+                                    using System.Collections.Generic;
+                                    using UnityEngine;
+                                    using UnityEngine.SceneManagement;
+                                    using UnityEngine.UI;
+                                    
+                                    
+                                    public class Player : MonoBehaviour {
+                                        private float stuur;
+                                        private float _xmin;
+                                        private float _xmax;
+                                    
+                                        public float Padding = 0.7f;
+                                        public float speed;
+                                        private float health = 200f;
+                                        public Slider healthSlider;
+                                        public GameObject laserPreFab;
+                                        private float straalsnelheid = 4f;
+                                        private float vuurreed = 0.2f;
+                                    
+                                        public AudioClip FireSound;
+                                    
+                                        // Use this for initialization
+                                        void Start() {
+                                            float distance = transform.position.z - Camera.main.transform.position.z;
+                                            Vector3 meestlinks = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, distance));
+                                            Vector3 meestrechts = Camera.main.ViewportToWorldPoint(new Vector3(1, 0, distance));
+                                            _xmin = meestlinks.x + Padding;
+                                            _xmax = meestrechts.x - Padding;
+                                    
+                                        }
+                                    
+                                        // Update is called once per frame
+                                        void Update() {
+                                    
+                                            
+                                            stuur = Mathf.Clamp((stuur += Input.GetAxis("Horizontal") * Time.deltaTime * speed), _xmin, _xmax);
+                                            transform.position = new Vector2(stuur, transform.position.y);
+                                    
+                                            if (Input.GetKeyDown(KeyCode.Space))
+                                            {
+                                                InvokeRepeating("Fire", 0.000001f, vuurreed);
+                                            }
+                                            if (Input.GetKeyUp(KeyCode.Space))
+                                            {
+                                                CancelInvoke("Fire");
+                                            }
+                                        }
+                                        void Fire()
+                                        {
+                                            Vector3 startpositie = transform.position + new Vector3(0, 1.2f, 0);
+                                            GameObject straal = Instantiate(laserPreFab, startpositie, Quaternion.identity);
+                                            straal.GetComponent &lt;Rigidbody2D&gt;().velocity = new Vector2(0, straalsnelheid);
+                                            AudioSource.PlayClipAtPoint(FireSound, transform.position);
+                                        }
+                                        private void OnTriggerEnter2D(Collider2D other)
+                                        {
+                                            projectile missile = other.GetComponent &lt;projectile&gt;();
+                                            if (missile)
+                                            {
+                                                health -= missile.GetDamage();
+                                                missile.Hit();
+                                                if (health <= 0)
+                                                {
+                                                    Die();
+                                    
+                                                }
+                                                healthSlider.value = health;
+                                            }
+                                            }
+                                            void Die()
+                                            {
+                                                Destroy (gameObject);
+                                    
+                                            SceneManager.LoadScene("end");
+                                        }
+                                        
+                                    
+                                    
+                                    }
+                                    
+
+                                </pre>
+                                <p class="card-text"></p>
+                              </div>
+                            </div>
+
+        <a href="index.html" class="btn btn-secondary btn-lg btn-block">terug naar startpagina</a>
+</body>

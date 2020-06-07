@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+ <!-- Bootstrap CSS -->
+<head>
+ <link rel="stylesheet" 
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" 
+    integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" 
+    crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="style.css">
+   
+
+</head>
+<body>
+        <div class="jumbotron jumbotron-fluid">
+                <div class="container">
+                  <h1 class="text-center">Space Bois
+                 </h1>
+                 
+                </div>
+              </div>
+              <p>
+                  In dit project moest ik een legend of zelda rip off maken om het drop bedrijf venco te promoten. <br>
+                  hieronder kunt u een script vinden van een bossfight tegen tikkels de tovenaar, gebaseerd op het venco snoep tikkels.
+              </p>
+              <div class="card text-white bg-secondary mb-3 " >
+                    <div class="card-header">bossfight script</div>
+                    <div class="card-body">
+                            <pre class='brush: csharp'>
+
+                                    using System;
+                                    using System.Collections;
+                                    using System.Collections.Generic;
+                                    using System.Timers;
+                                    using UnityEngine;
+                                    using Random = UnityEngine.Random;
+                                    
+                                    
+                                    public class TikkelsBoss : MonoBehaviour
+                                    {
+                                        private GameObject player; //Variable to store the players gameobject(s);
+                                        private Vector2 telleportLocation; //Variable to store Tikkels teleport location;
+                                        private float distance;
+                                        public GameObject bullet; //varaible to store the nullet prefab;
+                                        public float timer;
+                                        protected bool countDown;
+                                        protected bool chargedShot;
+                                        [SerializeField] protected float hp ;
+                                        protected bool canAction;
+                                        [SerializeField] protected float t;
+                                    
+                                        [SerializeField] protected float angle;
+                                        public int i = 0;
+                                        public bool CanFire = false;
+                                        public BossHealth bossHealth;
+                                        protected bool cooldown;
+                                        public float xMinimum;
+                                        public float xMaximum;
+                                        public float yMinimum;
+                                        public float yMaximum;
+                                    
+                                        public bool TikkelsActive = false;
+                                        void Start() //Start is called before the first frame update;
+                                        {
+                                            bossHealth = gameObject.GetComponent<BossHealth>();
+                                            hp = bossHealth.maxhealth;
+                                            canAction = true;
+                                            t = bossHealth.maxhealth;
+                                    
+                                            player = GameObject.FindWithTag("Player");
+                                            countDown = false;
+                                        }
+                                    
+                                    
+                                        void Update() //Update is called once per frame;
+                                        {
+                                            if (TikkelsActive) 
+                                            {
+                                                IsClose();
+                                                Action();
+                                                Timer();
+                                                firing();
+                                                Testing();
+                                                Dorime();
+                                                Cooldown();
+                                                Defeated();
+                                            }
+                                        }
+                                        
+                                        void IsClose() //Telleports Tikkel to a random place within the given range;
+                                        {
+                                            if (Distance() <= 2f && CanFire == false)
+                                            {
+                                                Telleport();
+                                            }
+                                        }
+                                        void Action()
+                                        {
+                                            if (canAction == true)
+                                            {
+                                                timer = 3 ;
+                                                countDown = true;
+                                                canAction = false;
+                                            }
+                                    
+                                            if (timer <= 0 && CanFire == false)
+                                            {
+                                                countDown = false;
+                                                int u = Random.RandomRange(0, 3);
+                                                if (u == 0)
+                                                {
+                                                    RapidFire();
+                                    
+                                                }
+                                                else if (u == 1)
+                                                {
+                                                    ChargeFire();
+                                                }
+                                                else if (u == 2)
+                                                {
+                                                    Telleport();
+                                                }
+                                                else
+                                                {
+                                                    Debug.Log("U fucked up again");
+                                                }
+                                            }
+                                        }
+                                    
+                                        public void Telleport()
+                                        {
+                                            //sets telleportLocation to a random vector2 within the given range;
+                                        telleportLocation = new Vector2(Random.Range(xMinimum, xMaximum), Random.Range(yMinimum, yMaximum)); 
+                                        transform.position = telleportLocation;
+                                        }
+                                        void Timer()
+                                        {
+                                            if (countDown == true)
+                                            {
+                                                timer -= Time.deltaTime;
+                                            }
+                                        }
+                                    
+                                        void Cooldown()
+                                        {
+                                            if (timer <= 0 && cooldown)
+                                            {
+                                                CanFire = false;
+                                                cooldown = false;
+                                                cooldown = false;
+                                                canAction = true;
+                                            }
+                                        }
+                                    
+                                        float Distance()
+                                        {
+                                            float distance = Vector2.Distance(transform.position, player.transform.position);
+                                            return distance;
+                                        }
+                                    
+                                    
+                                        void firing()
+                                        {
+                                            if (timer <= 0 && CanFire && !cooldown)
+                                            {
+                                                if (i < 10)
+                                                {
+                                                    countDown = true;
+                                                    i++;
+                                                    if (!chargedShot)
+                                                    {
+                                                        Telleport();
+                                                    }
+                                                    Fire();
+                                                    timer = 0.5f;
+                                                }
+                                                else if (i == 10)
+                                                {
+                                                    if (chargedShot)
+                                                    {
+                                                        countDown = false;
+                                                        CanFire = false;
+                                                        canAction = true;
+                                                    }
+                                                    else if (!chargedShot)
+                                                    {
+                                                        timer = 2;
+                                                        CanFire = true;
+                                                        cooldown = true;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    timer = 0;
+                                                    i = 10;
+                                                    Debug.Log("fucked up the code");
+                                                    countDown = false;
+                                                    CanFire = false;
+                                                }
+                                            }
+                                        }
+                                    
+                                        void RapidFire()
+                                        {
+                                            CanFire = true;
+                                            i = 0;
+                                            chargedShot = false;
+                                        }
+                                    
+                                        void ChargeFire()
+                                        {
+                                            timer = 4f;
+                                            countDown = true;
+                                            CanFire = true;
+                                            i = 9;
+                                            chargedShot = true;
+                                        }
+                                    
+                                        void Fire()
+                                        {
+                                            if (hp <= 0) return;
+                                            var directionVector = player.transform.position - this.transform.position;
+                                            angle = Mathf.Atan2(directionVector.y, directionVector.x) * Mathf.Rad2Deg;
+                                            GameObject tikkel = Instantiate(bullet, transform.position, Quaternion.Euler(0, 0, angle));
+                                            Bullet bulletComponent = tikkel.GetComponent&lt;Bullet&gt;();
+                                            var bulletRenderer = bulletComponent.GetComponent &lt;Renderer&gt;();
+                                            if (chargedShot == true)
+                                            {
+                                                Bullet.speed = 15;
+                                                bulletRenderer.material.SetColor("_Color", Color.black);
+                                            }
+                                            else
+                                            {
+                                                Bullet.speed = 10f;
+                                                bulletRenderer.material.SetColor("_Color", new Color(Random.value, Random.value, Random.value));
+                                            }
+                                    
+                                            if (bulletComponent)
+                                            {
+                                                bulletComponent.Fire(directionVector);
+                                            }
+                                        }
+                                    
+                                    
+                                        void Dorime()
+                                        {// for testing
+                                            hp = bossHealth.health;
+                                            if (t > hp)
+                                            {
+                                                Console.WriteLine("AMENO AMENO");
+                                                Telleport();
+                                                t--;
+                                            }
+                                    
+                                        }
+                                    
+                                        void Defeated()
+                                        {//defeated boss
+                                            if (hp <= 0)
+                                            {
+                                                canAction = false;
+                                                CanFire = false;
+                                            }
+                                        }
+                                    
+                                    
+                                    
+                                        void Testing() // just for testing sum shit 
+                                        {
+                                            var oi = GetComponent &lt;SpriteRenderer&gt;();
+                                            if (CanFire)
+                                            {
+                                    
+                                                oi.color = new Color(0, 1, 0, 1);
+                                            }
+                                            else
+                                            {
+                                                oi.color = new Color(1, 1, 1, 1);
+                                            }
+                                        }
+                                    
+                                        public void ToggleTikkelsActive() {
+                                            TikkelsActive = !TikkelsActive;
+                                        }
+                                        void OnDrawGizmosSelected() {
+                                            Vector3 GizmoVector1 = new Vector3(xMinimum, yMinimum,0);
+                                            Vector3 GizmoVector2 = new Vector3(xMaximum, yMaximum,0);
+                                            Gizmos.DrawLine(GizmoVector1, GizmoVector2);
+                                        }
+                                    }
+                                    
+
+                                </pre>
+                                <p class="card-text"></p>
+                              </div>
+                            </div>
+
+        <a href="index.html" class="btn btn-secondary btn-lg btn-block">terug naar startpagina</a>
+</body>
