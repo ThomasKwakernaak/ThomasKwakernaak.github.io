@@ -1,5 +1,6 @@
 body {
     border-left: 200px solid white;
     border-right: 200px solid white ;  
+    .webgl-content .footer .fullscreen {background-image: url('fullscreen.png'); width: 38px; float: right;}
 }
  
